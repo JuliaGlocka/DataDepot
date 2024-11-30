@@ -1,10 +1,21 @@
-from flask import Flask, render_template
+from flask import Flask
+from dotenv import load_dotenv
+import os
 
+# Załaduj zmienne środowiskowe z pliku .env
+load_dotenv()
+
+# Tworzymy aplikację Flask
 app = Flask(__name__)
 
-@app.route("/")
-def home():
-    return render_template("home.html", title="Home")
+# Konfigurujemy aplikację przy pomocy zmiennych środowiskowych
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+app.config['DATABASE_URI'] = os.getenv('DATABASE_URI')
 
-if __name__ == "__main__":
+@app.route('/')
+def home():
+    return 'Welcome to the app!'
+
+if __name__ == '__main__':
     app.run(debug=True)
+
