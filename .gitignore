@@ -1,0 +1,32 @@
+# Ignore virtual environment directories
+.venv/
+venv/
+env/
+ENV/
+*.env
+
+# Ignore IDE specific files
+.idea/
+*.sublime-workspace
+*.sublime-project
+.vscode/
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.swp
+
+# Ignore test logs
+*.log
+
+# Ignore PyInstaller files
+dist/
+build/
+*.spec
+
