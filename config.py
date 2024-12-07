@@ -1,11 +1,14 @@
-import os
 from dotenv import load_dotenv
+import os
 
-# Ładowanie zmiennych środowiskowych z .env
-load_dotenv()
+load_dotenv()  # Wczytaj zmienne z pliku .env
+
 
 class Config:
-    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")
+    DB_USER = os.getenv("DB_USER", "postgres")
+    DB_PASSWORD = os.getenv("DB_PASSWORD", "discoelysium")
+    DB_NAME = os.getenv("DB_NAME", "datadepot_db")
+
+    SQLALCHEMY_DATABASE_URI = f"postgresql://{DB_USER}:{DB_PASSWORD}@localhost/{DB_NAME}"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SECRET_KEY = os.getenv("SECRET_KEY", "your-default-secret-key")
 
