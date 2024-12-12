@@ -40,6 +40,10 @@ class DataDepot(db.Model):
 def home():
     return "Welcome to DataDepot!"
 
+@app.route('/datadepot', methods=['GET'])
+def datadepot():
+    return "This is the DataDepot endpoint!"
+
 # CRUD Endpoints
 @app.route('/records', methods=['GET'])
 def get_records():
@@ -66,12 +70,22 @@ def get_records():
         for record in records
     ])
 
+
 @app.route('/records', methods=['POST'])
 def create_record():
     """
     Create a new record in the database.
     """
     data = request.json
+
+    # Walidacja danych (sprawdzamy, czy pola są obecne)
+    required_fields = ['name', 'phone', 'email', 'country', 'region', 'list', 'alphanumeric', 'currency', 'numberrange',
+                       'text', 'postalZip', 'address']
+
+    for field in required_fields:
+        if field not in data:
+            return jsonify({"error": f"Missing required field: {field}"}), 400
+
     new_record = DataDepot(
         name=data['name'],
         phone=data['phone'],
@@ -86,9 +100,14 @@ def create_record():
         postalZip=data['postalZip'],
         address=data['address']
     )
-    db.session.add(new_record)
-    db.session.commit()
-    return jsonify({"message": "Record created successfully", "record_id": new_record.id}), 201
+
+    try:
+        db.session.add(new_record)
+        db.session.commit()
+        return jsonify({"message": "Record created successfully", "record_id": new_record.id}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/records/<int:record_id>', methods=['PUT'])
 def update_record(record_id):
