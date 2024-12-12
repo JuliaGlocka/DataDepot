@@ -1,7 +1,10 @@
 from flask import Flask, render_template, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.dialects.postgresql import JSON
+from flask_migrate import Migrate
 from config import Config
 
+# Initialize Flask application
 app = Flask(__name__)
 
 # Load configuration
@@ -12,6 +15,9 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # Initialize SQLAlchemy
 db = SQLAlchemy(app)
 
+# Initialize Migrate (for database migrations)
+migrate = Migrate(app, db)
+
 # Define the database model
 class DataDepot(db.Model):
     __tablename__ = 'datadepot_db'
@@ -21,17 +27,13 @@ class DataDepot(db.Model):
     email = db.Column(db.String(255))
     country = db.Column(db.String(100))
     region = db.Column(db.String(50))
-    list = db.Column(db.String(255))
+    list = db.Column(JSON(255))
     alphanumeric = db.Column(db.String(255))
     currency = db.Column(db.String(100))
     numberrange = db.Column(db.Integer)
     text = db.Column(db.Text)
     postalZip = db.Column(db.String(10))
     address = db.Column(db.String(255))
-
-# Create tables in the database (only for development)
-with app.app_context():
-    db.create_all()
 
 # Root route
 @app.route('/')
@@ -120,5 +122,6 @@ def delete_record(record_id):
     db.session.commit()
     return jsonify({"message": "Record deleted successfully"})
 
+# Running the application
 if __name__ == "__main__":
     app.run(debug=True)
